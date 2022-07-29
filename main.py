@@ -81,7 +81,7 @@ def convert_data(received_data, data_type):
     elif data_type == 'roaster_status':
         converted = {
             'bean_temp': round(convert_struct.unpack(received_data[0:4])[0], 1),
-            'fan_speed': convert_struct.unpack('h', received_data[44:46])[0],
+            'fan_speed': convert_struct.unpack(received_data[44:46])[0],
             'ir_temp': round(convert_struct.unpack(received_data[32:36])[0], 1),
         }
     return converted
@@ -105,8 +105,6 @@ print(f"Reply1: {reply1}")
 print(f"Reply2: {reply2}")
 print(f"Convert Reply1: {convert_struct.iter_unpack(reply1)}")
 print(f"Convert Reply2: {convert_struct.iter_unpack(reply2)}")
-
-
 
 print(convert_data(reply, 'roaster_status'))
 
