@@ -67,32 +67,43 @@ def receive(length=32):
 
     return received_data
 
-convert_struct = Struct(format='f')
+## Formatting conversion from binary: 
+## Data Schema:
+## Status_1 returns 64 bytes:
+## 
+## Status_2 returns 64 bytes:
+## Serial_Number: 
+convert_struct = struct.Struct('6f ')
 
 def convert_data(received_data, data_type):
-    if data_type == 'serial_number':
-        converted = unpack('h', received_data[0:2])[0]
-    elif data_type == 'firmware':
-        converted = unpack('h', received_data[24:26])[0]
-    elif data_type == 'batches':
-        converted = unpack('>I', received_data[27:31])[0]
-    elif data_type == 'bean_temp':
-        converted = round(unpack('f', received_data[0:4])[0], 1)
-    elif data_type == 'roaster_status':
-        converted = {
-            'bean_temp': round(convert_struct.unpack(received_data[0:4])[0], 1),
-            'fan_speed': convert_struct.unpack(received_data[44:46])[0],
-            'ir_temp': round(convert_struct.unpack(received_data[32:36])[0], 1),
-        }
+    import pickle
+    unpickled_data = pickle.loads(received_data)
+        converted = unpickled_data
+    # if data_type == 'serial_number':
+    #     converted = unpack('h', received_data[0:2])[0]
+    # elif data_type == 'firmware':
+    #     converted = unpack('h', received_data[24:26])[0]
+    # elif data_type == 'batches':
+    #     converted = unpack('>I', received_data[27:31])[0]
+    # elif data_type == 'bean_temp':
+    #     converted = round(unpack('f', received_data[0:4])[0], 1)
+    # elif data_type == 'roaster_status':
+    #     converted = {
+    #         'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
+    #         'fan_speed': convert_struct.unpack('h', received_data[44:46])[0],
+    #         'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
+    #     }
     return converted
 
 send(Aillio['commands']['info_1'])
 reply = receive()
+print(f"Info_1: {reply}")
 print(convert_data(reply, 'serial_number'))
 print(convert_data(reply, 'firmware'))
 
 send(Aillio['commands']['info_2'])
 reply = receive(36)
+print(f"Info_2: {reply}")
 print(convert_data(reply, 'batches'))
 
 send(Aillio['commands']['status_1'])
@@ -103,8 +114,10 @@ reply = reply1 + reply2
 
 print(f"Reply1: {reply1}")
 print(f"Reply2: {reply2}")
-print(f"Convert Reply1: {convert_struct.iter_unpack(reply1)}")
-print(f"Convert Reply2: {convert_struct.iter_unpack(reply2)}")
+print(f"Convert Reply1: {convert_struct.unpack(reply1)}")
+print(f"Convert Reply2: {convert_struct.unpack(reply2)}")
+
+
 
 print(convert_data(reply, 'roaster_status'))
 
