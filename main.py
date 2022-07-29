@@ -89,7 +89,62 @@ send(Aillio['commands']['status_2'])
 reply2 = receive(64)
 reply = reply1 + reply2 
 
+print(f"Reply: {reply}")
 print(convert_data(reply, 'roaster_status'))
+
+
+# # Stuff from Artisan's Aillio config file:
+# valid = state[41]
+#         # Heuristic to find out if the data is valid
+#         # It looks like we get a different message every 15 seconds
+#         # when we're not roasting.  Ignore this message for now.
+#         if valid == 10:
+#             self.bt = round(unpack('f', state[0:4])[0], 1)
+#             self.bt_ror = round(unpack('f', state[4:8])[0], 1)
+#             self.dt = round(unpack('f', state[8:12])[0], 1)
+#             self.exitt = round(unpack('f', state[16:20])[0], 1)
+#             self.minutes = state[24]
+#             self.seconds = state[25]
+#             self.fan = state[26]
+#             self.heater = state[27]
+#             self.drum = state[28]
+#             self.r1state = state[29]
+#             self.irt = round(unpack('f', state[32:36])[0], 1)
+#             self.pcbt = round(unpack('f', state[36:40])[0], 1)
+#             self.fan_rpm = unpack('h', state[44:46])[0]
+#             self.voltage = unpack('h', state[48:50])[0]
+#             self.coil_fan = round(unpack('i', state[52:56])[0], 1)
+#             self.__dbg('BT: ' + str(self.bt))
+#             self.__dbg('BT RoR: ' + str(self.bt_ror))
+#             self.__dbg('DT: ' + str(self.dt))
+#             self.__dbg('exit temperature ' + str(self.exitt))
+#             self.__dbg('PCB temperature: ' + str(self.irt))
+#             self.__dbg('IR temperature: ' + str(self.pcbt))
+#             self.__dbg('voltage: ' + str(self.voltage))
+#             self.__dbg('coil fan: ' + str(self.coil_fan))
+#             self.__dbg('fan: ' + str(self.fan))
+#             self.__dbg('heater: ' + str(self.heater))
+#             self.__dbg('drum speed: ' + str(self.drum))
+#             self.__dbg('time: ' + str(self.minutes) + ':' + str(self.seconds))
+
+#         state = state[64:]
+#         self.coil_fan2 = round(unpack('i', state[32:36])[0], 1)
+#         self.pht = unpack('H', state[40:42])[0]
+#         self.__dbg('pre-heat temperature: ' + str(self.pht))
+#         if self.r1state == self.AILLIO_STATE_OFF:
+#             self.state_str = 'off'
+#         elif self.r1state == self.AILLIO_STATE_PH:
+#             self.state_str = 'pre-heating to ' + str(self.pht) + 'C'
+#         elif self.r1state == self.AILLIO_STATE_CHARGE:
+#             self.state_str = 'charge'
+#         elif self.r1state == self.AILLIO_STATE_ROASTING:
+#             self.state_str = 'roasting'
+#         elif self.r1state == self.AILLIO_STATE_COOLING:
+#             self.state_str = 'cooling'
+#         elif self.r1state == self.AILLIO_STATE_SHUTDOWN:
+#             self.state_str = 'shutdown'
+#         self.__dbg('state: ' + self.state_str)
+#         self.__dbg('second coil fan: ' + str(self.coil_fan2))
 
 # # Let's fuzz around! 
  
