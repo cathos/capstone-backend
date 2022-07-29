@@ -1,6 +1,6 @@
 # ctrl_transfer( bmRequestType, bmRequest, wValue, wIndex, nBytes)
 
-from struct import unpack
+from struct import Struct, unpack
 import usb.core
 import usb.util
 # import usb.control
@@ -67,6 +67,8 @@ def receive(length=32):
 
     return received_data
 
+convert_struct = Struct(format='f')
+
 def convert_data(received_data, data_type):
     if data_type == 'serial_number':
         converted = unpack('h', received_data[0:2])[0]
@@ -78,7 +80,7 @@ def convert_data(received_data, data_type):
         converted = round(unpack('f', received_data[0:4])[0], 1)
     elif data_type == 'roaster_status':
         converted = {
-            'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
+            'bean_temp': round(convert_struct.unpack(received_data[0:4])[0], 1),
             'fan_speed': unpack('h', received_data[44:46])[0],
             'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
         }
