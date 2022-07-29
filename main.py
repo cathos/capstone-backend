@@ -103,8 +103,9 @@ reply = reply1 + reply2
 
 print(f"Reply1: {reply1}")
 print(f"Reply2: {reply2}")
-print(f"Convert Reply1: {convert_struct.unpack(reply1)}")
-print(f"Convert Reply1: {convert_struct.unpack(reply1)}")
+print(f"Convert Reply1: {convert_struct.iter_unpack(reply1)}")
+print(f"Convert Reply2: {convert_struct.iter_unpack(reply2)}")
+
 
 
 print(convert_data(reply, 'roaster_status'))
