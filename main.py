@@ -90,7 +90,7 @@ def convert_data(received_data, data_type):
     elif data_type == 'roaster_status':
         converted = {
             'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
-            'fan_speed': convert_struct.unpack('h', received_data[44:46])[0],
+            'fan_speed': unpack('h', received_data[44:46])[0],
             'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
             'roast_minutes': unpack('B', received_data[24]),
         }
