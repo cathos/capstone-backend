@@ -73,7 +73,7 @@ def receive(length=32):
 ## 
 ## Status_2 returns 64 bytes:
 ## Serial_Number: 
-convert_struct = struct.Struct('6f ')
+# convert_struct = struct.Struct('6f ')
 
 def convert_data(received_data, data_type):
     import pickle
