@@ -96,16 +96,16 @@ def convert_data(received_data, data_type):
         }
     return converted
 
-send(Aillio['commands']['info_1'])
-reply = receive()
-print(f"Info_1: {reply}")
-print(convert_data(reply, 'serial_number'))
-print(convert_data(reply, 'firmware'))
+# send(Aillio['commands']['info_1'])
+# reply = receive()
+# print(f"Info_1: {reply}")
+# print(convert_data(reply, 'serial_number'))
+# print(convert_data(reply, 'firmware'))
 
-send(Aillio['commands']['info_2'])
-reply = receive(36)
-print(f"Info_2: {reply}")
-print(convert_data(reply, 'batches'))
+# send(Aillio['commands']['info_2'])
+# reply = receive(36)
+# print(f"Info_2: {reply}")
+# print(convert_data(reply, 'batches'))
 
 send(Aillio['commands']['status_1'])
 reply1 = receive(64)
