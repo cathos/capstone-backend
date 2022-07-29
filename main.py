@@ -41,6 +41,13 @@ if dev is None:
     raise ValueError('Device not found')
     # return dev
 
+for cfg in dev:
+  for intf in cfg:
+    if dev.is_kernel_driver_active(intf.bInterfaceNumber):
+      try:
+        dev.detach_kernel_driver(intf.bInterfaceNumber)
+      except usb.core.USBError as e:
+        sys.exit("Could not detatch kernel driver from interface({0}): {1}".format(intf.bInterfaceNumber, str(e)))
  
 # set the active configuration. With no arguments, the first
 # configuration will be the active one
