@@ -1,5 +1,6 @@
 # ctrl_transfer( bmRequestType, bmRequest, wValue, wIndex, nBytes)
 
+from struct import unpack
 import usb.core
 import usb.util
 # import usb.control
@@ -50,13 +51,45 @@ usb.util.claim_interface(dev, 0x1)
 def send(command):
     dev.write(Aillio['write_endpoint'], command)
 
-def receive(length):
+def receive(length=32):
     '''
-    length is either 32 or 64 
+    length is either 32 or 64 (or maybe 36?)
     '''
-    return dev.read(Aillio['read_endpoint'], length)
+    received_data = dev.read(Aillio['read_endpoint'], length)
 
+    return received_data
 
+def convert_data(received_data, data_type):
+    if data_type == 'serial_number':
+        converted = unpack('h', received_data[0:2])[0]
+    elif data_type == 'firmware':
+        converted = unpack('h', received_data[24:26])[0]
+    elif data_type == 'batches':
+        converted = unpack('>I', received_data[27:31])[0]
+    elif data_type == 'bean_temp':
+        converted = round(unpack('f', received_data[0:4])[0], 1)
+    elif data_type == 'roaster_status':
+        converted = {
+            'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
+        }
+    return converted
+
+send(Aillio['commands']['info_1'])
+reply = receive()
+print(convert_data(reply, 'serial_number'))
+print(convert_data(reply, 'firmware'))
+
+send(Aillio['commands']['info_2'])
+reply = receive(36)
+print(convert_data(reply, 'batches'))
+
+send(Aillio['commands']['status_1'])
+reply1 = receive(64)
+send(Aillio['commands']['status_2'])
+reply2 = receive(64)
+reply = reply1 + reply2 
+
+print(convert_data(reply, 'roaster_status'))
 
 # # Let's fuzz around! 
  
