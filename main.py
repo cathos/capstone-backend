@@ -41,6 +41,7 @@ if dev is None:
     raise ValueError('Device not found')
     # return dev
 
+# detach roaster if it is currently held by another process (from https://github.com/pyusb/pyusb/issues/76#issuecomment-118460796)
 for cfg in dev:
   for intf in cfg:
     if dev.is_kernel_driver_active(intf.bInterfaceNumber):
@@ -78,6 +79,8 @@ def convert_data(received_data, data_type):
     elif data_type == 'roaster_status':
         converted = {
             'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
+            'fan_speed': unpack('h', received_data[44:46])[0],
+            'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
         }
     return converted
 
