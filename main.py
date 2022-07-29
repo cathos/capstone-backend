@@ -92,7 +92,7 @@ def convert_data(received_data, data_type):
             'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
             'fan_speed': unpack('h', received_data[44:46])[0],
             'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
-            'roast_minutes': unpack('c', received_data[24])[0],
+            'roast_minutes': unpack('s', received_data[24])[0],
         }
     return converted
 
