@@ -81,8 +81,8 @@ def convert_data(received_data, data_type):
     elif data_type == 'roaster_status':
         converted = {
             'bean_temp': round(convert_struct.unpack(received_data[0:4])[0], 1),
-            'fan_speed': unpack('h', received_data[44:46])[0],
-            'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
+            'fan_speed': convert_struct.unpack('h', received_data[44:46])[0],
+            'ir_temp': round(convert_struct.unpack(received_data[32:36])[0], 1),
         }
     return converted
 
@@ -101,7 +101,12 @@ send(Aillio['commands']['status_2'])
 reply2 = receive(64)
 reply = reply1 + reply2 
 
-print(f"Reply: {reply}")
+print(f"Reply1: {reply1}")
+print(f"Reply2: {reply2}")
+print(f"Convert Reply1: {convert_struct.unpack(reply1)}")
+print(f"Convert Reply1: {convert_struct.unpack(reply1)}")
+
+
 print(convert_data(reply, 'roaster_status'))
 
 
