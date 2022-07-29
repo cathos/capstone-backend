@@ -78,7 +78,7 @@ convert_struct = struct.Struct('6f ')
 def convert_data(received_data, data_type):
     import pickle
     unpickled_data = pickle.loads(received_data)
-        converted = unpickled_data
+    converted = unpickled_data
     # if data_type == 'serial_number':
     #     converted = unpack('h', received_data[0:2])[0]
     # elif data_type == 'firmware':
