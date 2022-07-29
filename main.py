@@ -76,23 +76,24 @@ def receive(length=32):
 # convert_struct = struct.Struct('6f ')
 
 def convert_data(received_data, data_type):
-    import pickle
-    unpickled_data = pickle.loads(received_data)
-    converted = unpickled_data
-    # if data_type == 'serial_number':
-    #     converted = unpack('h', received_data[0:2])[0]
-    # elif data_type == 'firmware':
-    #     converted = unpack('h', received_data[24:26])[0]
-    # elif data_type == 'batches':
-    #     converted = unpack('>I', received_data[27:31])[0]
-    # elif data_type == 'bean_temp':
-    #     converted = round(unpack('f', received_data[0:4])[0], 1)
-    # elif data_type == 'roaster_status':
-    #     converted = {
-    #         'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
-    #         'fan_speed': convert_struct.unpack('h', received_data[44:46])[0],
-    #         'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
-    #     }
+    # import pickle
+    # unpickled_data = pickle.loads(received_data)
+    # converted = unpickled_data
+    if data_type == 'serial_number':
+        converted = unpack('h', received_data[0:2])[0]
+    elif data_type == 'firmware':
+        converted = unpack('h', received_data[24:26])[0]
+    elif data_type == 'batches':
+        converted = unpack('>I', received_data[27:31])[0]
+    elif data_type == 'bean_temp':
+        converted = round(unpack('f', received_data[0:4])[0], 1)
+    elif data_type == 'roaster_status':
+        converted = {
+            'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
+            'fan_speed': convert_struct.unpack('h', received_data[44:46])[0],
+            'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
+            'roast_minutes': unpack('B', received_data[24]),
+        }
     return converted
 
 send(Aillio['commands']['info_1'])
