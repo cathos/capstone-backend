@@ -46,7 +46,7 @@ Aillio = {
 test_data_1 = '4c:20:07:00:ff:ff:ff:dd:00:00:00:00:84:79:04:00:20:18:01:00:01:f4:00:00:07:93:00:00:00:00:42:00:02:00:df:00'
 
 # def register_device(): 
-dev = usb.core.find(idVendor=Aillio['vendor'], idProduct=0xa27e)
+dev = usb.core.find(idVendor=Aillio['vendor'], idProduct=Aillio['product'])
 if dev is None:
     raise ValueError('Device not found')
     # return dev
@@ -112,23 +112,23 @@ def convert_data(received_data, data_type):
             'ir_bt': round(unpack('f', received_data[32:36])[0], 1),
             'pcb_temp': round(unpack('f', received_data[36:40])[0], 1),
             'fan_speed': unpack('h', received_data[44:46])[0],
-            'fan_voltage': unpack('h', received_data[48:50])[0],
+            'voltage': unpack('h', received_data[48:50])[0],
             'coil_fan_1_rpm': round(unpack('i', received_data[52:56])[0], 1),
             'coil_fan_2_rpm': round(unpack('i', received_data[96:100])[0], 1),
-            'preheat_temp': unpack('H', received_data[40:42])[0],
+            'preheat_temp': unpack('h', received_data[40:42])[0],
         }
     return converted
 
 send(Aillio['commands']['info_1'])
 reply = receive()
 # print(f"Info_1: {reply}")
-print(convert_data(reply, 'serial_number'))
-print(convert_data(reply, 'firmware'))
+print(f"Serial_number: {convert_data(reply, 'serial_number')}")
+print(f"Firmware_version: {convert_data(reply, 'firmware')}")
 
 send(Aillio['commands']['info_2'])
 reply = receive(36)
 # print(f"Info_2: {reply}")
-print(convert_data(reply, 'batches'))
+print(f"Batches: {convert_data(reply, 'batches')}")
 
 send(Aillio['commands']['status_1'])
 reply1 = receive(64)
