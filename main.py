@@ -1,6 +1,5 @@
 # ctrl_transfer( bmRequestType, bmRequest, wValue, wIndex, nBytes)
-
-from struct import Struct, unpack
+import struct
 import usb.core
 import usb.util
 # import usb.control
