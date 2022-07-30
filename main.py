@@ -43,7 +43,7 @@ Aillio = {
 
 
 
-test_data_1 = 4c:20:07:00:ff:ff:ff:dd:00:00:00:00:84:79:04:00:20:18:01:00:01:f4:00:00:07:93:00:00:00:00:42:00:02:00:df:00
+test_data_1 = '4c:20:07:00:ff:ff:ff:dd:00:00:00:00:84:79:04:00:20:18:01:00:01:f4:00:00:07:93:00:00:00:00:42:00:02:00:df:00'
 
 # def register_device(): 
 dev = usb.core.find(idVendor=Aillio['vendor'], idProduct=0xa27e)
