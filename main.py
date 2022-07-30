@@ -73,7 +73,7 @@ def receive(length=32):
 ## 
 ## Status_2 returns 64 bytes:
 ## Serial_Number: 
-# convert_struct = struct.Struct('6f ')
+convert_struct = struct.Struct('6f ')
 
 def convert_data(received_data, data_type):
     # import pickle
@@ -113,8 +113,9 @@ send(Aillio['commands']['status_2'])
 reply2 = receive(64)
 reply = reply1 + reply2 
 
-print(f"Reply1: {reply1}")
-print(f"Reply2: {reply2}")
+print(f"Reply1: {reply1[0]}")
+print(b'Reply1')
+print(f"Reply2: {reply2[0]}")
 # print(f"Convert Reply1: {convert_struct.unpack(reply1)}")
 # print(f"Convert Reply2: {convert_struct.unpack(reply2)}")
 
