@@ -32,8 +32,18 @@ Aillio = {
         'roasting': 0x06,
         'cooling': 0x08,
         'shutdown': 0x09,
+        0: 'off',
+        2: 'preaheating',
+        4: 'charge',
+        6: 'roasting',
+        8: 'cooling',
+        9: 'shutdown',
     },
 }
+
+
+
+test_data_1 = 4c:20:07:00:ff:ff:ff:dd:00:00:00:00:84:79:04:00:20:18:01:00:01:f4:00:00:07:93:00:00:00:00:42:00:02:00:df:00
 
 # def register_device(): 
 dev = usb.core.find(idVendor=Aillio['vendor'], idProduct=0xa27e)
@@ -73,7 +83,7 @@ def receive(length=32):
 ## 
 ## Status_2 returns 64 bytes:
 ## Serial_Number: 
-convert_struct = struct.Struct('6f ')
+# convert_struct = struct.Struct('6f*p')
 
 def convert_data(received_data, data_type):
     # import pickle
@@ -90,22 +100,35 @@ def convert_data(received_data, data_type):
     elif data_type == 'roaster_status':
         converted = {
             'bean_temp': round(unpack('f', received_data[0:4])[0], 1),
-            'fan_speed': unpack('h', received_data[44:46])[0],
-            'ir_temp': round(unpack('f', received_data[32:36])[0], 1),
+            'bt_ror': round(unpack('f', received_data[4:8])[0], 1),
+            'delta_t': round(unpack('f', received_data[8:12])[0], 1),
+            'ext_t': round(unpack('f', received_data[16:20])[0], 1),
             'roast_minutes': received_data[24],
+            'roast_seconds': received_data[25],
+            'fan_level': received_data[26],
+            'heater_level': received_data[27],
+            'drum_speed_level': received_data[28],
+            'roaster_state': Aillio['state'][received_data[29]],
+            'ir_bt': round(unpack('f', received_data[32:36])[0], 1),
+            'pcb_temp': round(unpack('f', received_data[36:40])[0], 1),
+            'fan_speed': unpack('h', received_data[44:46])[0],
+            'fan_voltage': unpack('h', received_data[48:50])[0],
+            'coil_fan_1_rpm': round(unpack('i', received_data[52:56])[0], 1),
+            'coil_fan_2_rpm': round(unpack('i', received_data[96:100])[0], 1),
+            'preheat_temp': unpack('H', received_data[40:42])[0],
         }
     return converted
 
-# send(Aillio['commands']['info_1'])
-# reply = receive()
+send(Aillio['commands']['info_1'])
+reply = receive()
 # print(f"Info_1: {reply}")
-# print(convert_data(reply, 'serial_number'))
-# print(convert_data(reply, 'firmware'))
+print(convert_data(reply, 'serial_number'))
+print(convert_data(reply, 'firmware'))
 
-# send(Aillio['commands']['info_2'])
-# reply = receive(36)
+send(Aillio['commands']['info_2'])
+reply = receive(36)
 # print(f"Info_2: {reply}")
-# print(convert_data(reply, 'batches'))
+print(convert_data(reply, 'batches'))
 
 send(Aillio['commands']['status_1'])
 reply1 = receive(64)
@@ -113,9 +136,9 @@ send(Aillio['commands']['status_2'])
 reply2 = receive(64)
 reply = reply1 + reply2 
 
-print(f"Reply1: {reply1[0]}")
-print(b'Reply1')
-print(f"Reply2: {reply2[0]}")
+# print(f"Reply1: {reply1[0]}")
+# print(b'Reply1')
+# print(f"Reply2: {reply2[0]}")
 # print(f"Convert Reply1: {convert_struct.unpack(reply1)}")
 # print(f"Convert Reply2: {convert_struct.unpack(reply2)}")
 
