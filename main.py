@@ -52,6 +52,7 @@ if dev is None:
     # return dev
 
 # detach roaster if it is currently held by another process (from https://github.com/pyusb/pyusb/issues/76#issuecomment-118460796)
+# there is probably a cleaner way to do this, and this seems to fail occasionally. 
 for cfg in dev:
   for intf in cfg:
     if dev.is_kernel_driver_active(intf.bInterfaceNumber):
