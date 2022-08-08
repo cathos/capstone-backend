@@ -102,6 +102,14 @@ class Roaster:
         self.status = self.convert_data(recieved_data, 'status')
         return self.status
 
+    def send_command(self, command):
+        try: 
+            self.send(AILLIO['commands'][command])
+            roaster_status = self.get_status()
+            return roaster_status
+        except: 
+            return 'invalid command'
+
     def print_all(self):
         pprint(f'info:{self.info}')
         pprint(f'status:{self.status}')
