@@ -37,6 +37,7 @@ class Roaster:
         usb.util.claim_interface(self.dev, 0x1)
         return self.dev
 
+    @staticmethod
     def convert_data(received_data, data_type):
         '''
         Aillio-specific logic to convert the return data from a C struct into python data types
