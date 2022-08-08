@@ -2,7 +2,7 @@
 from pprint import pprint
 import struct
 from struct import *
-from roaster_const import AILLIO
+from .roaster_const import AILLIO
 import usb.core
 import usb.util
 # import usb.control

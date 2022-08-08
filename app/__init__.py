@@ -1,8 +1,8 @@
 import os
 from flask import Flask
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -21,7 +21,7 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    
+
     # app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     # if test_config is None:
