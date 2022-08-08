@@ -1,11 +1,11 @@
 import json
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import requests
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.client.usb_client import Roaster
 
-load_dotenv()
+# load_dotenv()
 
 roast_bp = Blueprint("roast_bp", __name__, url_prefix="")
 
