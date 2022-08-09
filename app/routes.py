@@ -61,7 +61,8 @@ def change_roaster_state():
     '''
     request_body = request.get_json()
     if 'PRS' in request_body:
-        status_response = roaster.send_command('prs_button')
+        roaster.send_command('prs_button')
+        status_response = roaster.get_status()
         return make_response(jsonify(status_response['roaster_state']), 201)
     elif 'Heat+' in request_body:
         status_response = roaster.send_command('heater_increase')
