@@ -17,25 +17,35 @@ class Roaster:
     def register_device(self): 
         self.dev = usb.core.find(idVendor=AILLIO['vendor'], idProduct=AILLIO['product'])
 
+        try:
+            active_config = self.dev.get_active_configuration()
+        except usb.core.USBError:
+            active_config = None
+        if active_config is None or active_config.bConfigurationValue != 0x1:
+            self.dev.set_configuration(configuration=0x1)
+
         if self.dev is None:
             raise ValueError('Device not found')
 
         # detach roaster if it is currently held by another process (from https://github.com/pyusb/pyusb/issues/76#issuecomment-118460796)
-        # there is probably a cleaner way to do this, and this seems to fail occasionally. 
-        for cfg in self.dev:
-            for intf in cfg:
-                if self.dev.is_kernel_driver_active(intf.bInterfaceNumber):
-                    try:
-                        self.dev.detach_kernel_driver(intf.bInterfaceNumber)
-                    except usb.core.USBError as e:
-                        sys.exit("Could not detatch kernel driver from interface({0}): {1}".format(intf.bInterfaceNumber, str(e)))
-        
-        # set the active configuration. With no arguments, the first
-        # configuration will be the active one
-        self.dev.set_configuration(configuration=0x1)
+        # # there is probably a cleaner way to do this, and this seems to fail occasionally. 
+        # for cfg in self.dev:
+        #     for intf in cfg:
+        #         if self.dev.is_kernel_driver_active(intf.bInterfaceNumber):
+        #             try:
+        #                 self.dev.detach_kernel_driver(intf.bInterfaceNumber)
+        #             except usb.core.USBError as e:
+        #                 sys.exit("Could not detatch kernel driver from interface({0}): {1}".format(intf.bInterfaceNumber, str(e)))
         
         usb.util.claim_interface(self.dev, 0x1)
+
         return self.dev
+    
+    def unregister_device(self):
+        self.dev = usb.core.find(idVendor=AILLIO['vendor'], idProduct=AILLIO['product'])
+        self.dev.detach_kernel_driver()
+        usb.util.release_interface(self.dev, 0x1)
+        return 
 
     @staticmethod
     def convert_data(received_data, data_type):

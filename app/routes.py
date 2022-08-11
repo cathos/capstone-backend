@@ -11,6 +11,8 @@ from app.client.usb_client import Roaster
 roast_bp = Blueprint("roast_bp", __name__, url_prefix="")
 roaster = Roaster()
 
+roaster_dev = roaster.register_device()
+
 @roast_bp.route("/", methods=["GET"])
 def index():
     '''
@@ -27,6 +29,15 @@ def initialize_usb_connection():
     if roaster_dev is None:
         return make_response(jsonify("roaster not found"), 500)
     return make_response(jsonify("connection initialized"), 201)
+
+
+@roast_bp.route("/release", methods=["POST"])
+def release_usb_connection():
+    '''
+    Release usb connection so that reconnection can occur. 
+    '''
+    roaster.unregister_device()
+    return
 
 @roast_bp.route("/info", methods=["GET"])
 def get_roaster_info():
