@@ -1,7 +1,7 @@
 # ctrl_transfer( bmRequestType, bmRequest, wValue, wIndex, nBytes)
 from pprint import pprint
 import struct
-from struct import *
+from struct import unpack
 from .roaster_const import AILLIO
 import usb.core
 import usb.util
@@ -29,13 +29,13 @@ class Roaster:
 
         # detach roaster if it is currently held by another process (from https://github.com/pyusb/pyusb/issues/76#issuecomment-118460796)
         # # there is probably a cleaner way to do this, and this seems to fail occasionally. 
-        # for cfg in self.dev:
-        #     for intf in cfg:
-        #         if self.dev.is_kernel_driver_active(intf.bInterfaceNumber):
-        #             try:
-        #                 self.dev.detach_kernel_driver(intf.bInterfaceNumber)
-        #             except usb.core.USBError as e:
-        #                 sys.exit("Could not detatch kernel driver from interface({0}): {1}".format(intf.bInterfaceNumber, str(e)))
+        for cfg in self.dev:
+            for intf in cfg:
+                if self.dev.is_kernel_driver_active(intf.bInterfaceNumber):
+                    try:
+                        self.dev.detach_kernel_driver(intf.bInterfaceNumber)
+                    except usb.core.USBError as e:
+                        sys.exit("Could not detatch kernel driver from interface({0}): {1}".format(intf.bInterfaceNumber, str(e)))
         
         usb.util.claim_interface(self.dev, 0x1)
 
@@ -106,6 +106,7 @@ class Roaster:
     def get_info(self):
         self.send(AILLIO['commands']['info_1'])
         info_1 = self.receive()
+        # add a wait here?
         self.send(AILLIO['commands']['info_2'])
         info_2 = self.receive(36)
         recieved_data = info_1 + info_2
@@ -115,6 +116,7 @@ class Roaster:
     def get_status(self):
         self.send(AILLIO['commands']['status_1'])
         status_1 = self.receive(64)
+        # add a wait here?
         self.send(AILLIO['commands']['status_2'])
         status_2 = self.receive(64)
         recieved_data = status_1 + status_2
