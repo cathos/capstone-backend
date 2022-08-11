@@ -43,17 +43,20 @@ class Roaster:
     
     def unregister_device(self):
         self.dev = usb.core.find(idVendor=AILLIO['vendor'], idProduct=AILLIO['product'])
-        for cfg in self.dev:
-            for intf in cfg:
-                if self.dev.is_kernel_driver_active(intf.bInterfaceNumber):
-                    try:
-                        self.dev.detach_kernel_driver(intf.bInterfaceNumber)
-                    except usb.core.USBError as e:
-                        sys.exit("Could not detatch kernel driver from interface({0}): {1}".format(intf.bInterfaceNumber, str(e)))
-        
-        # self.dev.detach_kernel_driver()
-        usb.util.release_interface(self.dev, 0x1)
-        return 
+        try: 
+            for cfg in self.dev:
+                for intf in cfg:
+                    if self.dev.is_kernel_driver_active(intf.bInterfaceNumber):
+                        try:
+                            self.dev.detach_kernel_driver(intf.bInterfaceNumber)
+                        except usb.core.USBError as e:
+                            sys.exit("Could not detatch kernel driver from interface({0}): {1}".format(intf.bInterfaceNumber, str(e)))
+            
+            # self.dev.detach_kernel_driver()
+            usb.util.release_interface(self.dev, 0x1)
+            return "released interface"
+        except: 
+            return "unable to release interface"
 
     @staticmethod
     def convert_data(received_data, data_type):
