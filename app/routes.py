@@ -36,8 +36,11 @@ def release_usb_connection():
     '''
     Release usb connection so that reconnection can occur. 
     '''
-    roaster.unregister_device()
-    return
+    try: 
+        response = roaster.unregister_device()
+        return make_response(jsonify(response), 201)
+    except: 
+        return make_response(jsonify("failed to release connection"), 500)
 
 @roast_bp.route("/info", methods=["GET"])
 def get_roaster_info():
