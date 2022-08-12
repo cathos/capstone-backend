@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 import os
+from pprint import pprint
 # from dotenv import load_dotenv
 import requests
 from flask import Blueprint, jsonify, abort, make_response, request
@@ -58,6 +59,7 @@ def get_roaster_status():
     send roast status requests over usb and return roaster status
     returns: bean temperatures, delta temp, roasting state, ...
     '''
+    pprint('request headers: ', dict(request.headers))
     initial_time = datetime.now()
     status_response = roaster.get_status()
     response_time_delta = datetime.now() - initial_time
