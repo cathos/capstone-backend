@@ -94,7 +94,7 @@ class Roaster:
         '''
         possibly refactor the send-recieve loop into an async function in the future?
         '''
-        print('send request time', datetime.now)
+        print('send request time', datetime.now())
         self.dev.write(AILLIO['write_endpoint'], command)
 
     def receive(self, length=32):
@@ -102,7 +102,7 @@ class Roaster:
         length is 32, 36, or 64
         '''
         received_data = self.dev.read(AILLIO['read_endpoint'], length)
-        print('recieve data time', datetime.now)
+        print('recieve data time', datetime.now())
         return received_data
     
     def get_info(self):
