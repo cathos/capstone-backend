@@ -58,9 +58,9 @@ def get_roaster_status():
     send roast status requests over usb and return roaster status
     returns: bean temperatures, delta temp, roasting state, ...
     '''
-    initial_time = datetime.datetime.now
+    initial_time = datetime.now
     status_response = roaster.get_status()
-    response_time_delta = datetime.datetime.now - initial_time
+    response_time_delta = datetime.now - initial_time
     print('get roaster status response time', response_time_delta)
     return make_response(jsonify(status_response), 200)
 
