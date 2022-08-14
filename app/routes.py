@@ -30,10 +30,11 @@ async def bulk_data_runner():
     return bulkdata
     
 
-async def bulk_data_collector():
+async def bulk_data_collector(bulkdata_run):
     '''
     collector for bulk_data_runner
     '''
+    response = None
     while bulkdata_run: 
         response = await bulk_data_runner()
         time.sleep(0)
@@ -99,7 +100,7 @@ def start_bulk_recording():
     # task = asyncio.create_task(bulk_data_collector())
     # background_tasks.add(task)
     # task.add_done_callback(background_tasks.discard)
-    asyncio.run(bulk_data_collector())
+    asyncio.run(bulk_data_collector(bulkdata_run))
     return make_response(jsonify("Bulk Data Recording Started"), 201)
 
 @roast_bp.route("/bulkdata", methods=["GET"])
