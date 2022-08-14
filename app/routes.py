@@ -106,7 +106,7 @@ def get_bulk_roaster_data():
     todo: poll roaster continuously and cache data
     '''
     print(f"bulkdata_run: {bulkdata_run}")
-    print(bulkdata)
+    print(list(bulkdata))
     return make_response(jsonify(bulkdata), 200)
 
 @roast_bp.route("/change", methods=["POST"])
