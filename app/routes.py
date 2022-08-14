@@ -1,8 +1,10 @@
 import asyncio
+from asyncio import streams
 from datetime import datetime
 import json
 import os
 from pprint import pprint
+from queue import Queue
 import time
 # from dotenv import load_dotenv
 import requests
@@ -14,28 +16,26 @@ from app.client.usb_client import Roaster
 
 roast_bp = Blueprint("roast_bp", __name__, url_prefix="")
 roaster = Roaster()
-bulkdata = []
+bulkdata = Queue(maxsize=3600)
+bulkdata_run = False
 roaster_dev = roaster.register_device()
 
 async def bulk_data_runner():
     '''
     async function to continuously get & cache roaster data
     '''
-    time.sleep(0.5)
     status_response = await roaster.get_status()
     return status_response
     
+
 async def bulk_data_collector():
     '''
     collector for bulk_data_runner
     '''
-    if len(bulkdata) < 7200:
-        bulkdata.append(await bulk_data_runner())
-    else:
-        bulkdata.append(await bulk_data_runner())
-        bulkdata.pop(0)
-    return bulkdata
-
+    while bulkdata_run: 
+        time.sleep(0.5)
+        bulkdata.put(await bulk_data_runner())
+        
 
 @roast_bp.route("/", methods=["GET"])
 def index():
@@ -52,9 +52,7 @@ def initialize_usb_connection():
     roaster_dev = roaster.register_device()
     if roaster_dev is None:
         return make_response(jsonify("roaster not found"), 500)
-    bulk_data_collector()
     return make_response(jsonify("connection initialized"), 201)
-
 
 @roast_bp.route("/release", methods=["POST"])
 def release_usb_connection():
@@ -89,6 +87,14 @@ def get_roaster_status():
     response_time_delta = datetime.now() - initial_time
     print('get roaster status response time', response_time_delta)
     return make_response(jsonify(status_response), 200)
+
+@roast_bp.route("/startbulkrecording", methods=["POST"])
+def start_bulk_recording():
+    background_tasks = set()
+    task = asyncio.create_task(bulk_data_collector())
+    background_tasks.add(task)
+    task.add_done_callback(background_tasks.discard)
+    return make_response(jsonify("Bulk Data Recording Started"), 201)
 
 @roast_bp.route("/bulkdata", methods=["GET"])
 def get_bulk_roaster_data():
