@@ -91,11 +91,11 @@ def get_roaster_status():
 @roast_bp.route("/startbulkrecording", methods=["POST"])
 def start_bulk_recording():
     bulkdata_run = True
-    background_tasks = set()
-    task = asyncio.create_task(bulk_data_collector())
-    background_tasks.add(task)
-    task.add_done_callback(background_tasks.discard)
-    asyncio.run(task())
+    # background_tasks = set()
+    # task = asyncio.create_task(bulk_data_collector())
+    # background_tasks.add(task)
+    # task.add_done_callback(background_tasks.discard)
+    asyncio.run(bulk_data_collector())
     return make_response(jsonify("Bulk Data Recording Started"), 201)
 
 @roast_bp.route("/bulkdata", methods=["GET"])
