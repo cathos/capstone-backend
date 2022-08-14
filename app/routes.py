@@ -95,6 +95,7 @@ def start_bulk_recording():
     task = asyncio.create_task(bulk_data_collector())
     background_tasks.add(task)
     task.add_done_callback(background_tasks.discard)
+    asyncio.run(task())
     return make_response(jsonify("Bulk Data Recording Started"), 201)
 
 @roast_bp.route("/bulkdata", methods=["GET"])
