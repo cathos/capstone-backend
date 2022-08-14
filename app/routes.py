@@ -128,7 +128,8 @@ def change_roaster_state():
     Maybe use try-except with the usb errors?
     '''
     print(request.get_json(True))
-    request_body = request.get_json()['request']
+    # request_body = request.get_json()['request']
+    request_body = request.get_json()
     print(f"request_body {request_body}")
     if 'PRS' in request_body:
         roaster.send_command('prs_button')
