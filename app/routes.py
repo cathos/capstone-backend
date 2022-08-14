@@ -27,7 +27,7 @@ async def bulk_data_runner():
     status_response = roaster.get_status()
     time.sleep(0.5)
     bulkdata.put(status_response)
-    return bulkdata
+    # return bulkdata
     
 
 async def bulk_data_collector(bulkdata_run):
@@ -39,7 +39,7 @@ async def bulk_data_collector(bulkdata_run):
         response = await bulk_data_runner()
         time.sleep(0)
     
-    return "last response: ", response, "bulkdata_run: ", bulkdata_run, "bulkdata collection stopped", list(bulkdata.queue)
+    # return "last response: ", response, "bulkdata_run: ", bulkdata_run, "bulkdata collection stopped", list(bulkdata.queue)
         
 
 @roast_bp.route("/", methods=["GET"])
