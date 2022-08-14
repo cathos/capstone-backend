@@ -25,7 +25,9 @@ async def bulk_data_runner():
     async function to continuously get & cache roaster data
     '''
     status_response = await roaster.get_status()
-    return status_response
+    time.sleep(0.5)
+    bulkdata.put(status_response)
+    return bulkdata
     
 
 async def bulk_data_collector():
@@ -33,8 +35,10 @@ async def bulk_data_collector():
     collector for bulk_data_runner
     '''
     while bulkdata_run: 
-        time.sleep(0.5)
-        bulkdata.put(await bulk_data_runner())
+        response = await bulk_data_runner()
+        time.sleep(0)
+    
+    return "last response: ", response, "bulkdata_run: ", bulkdata_run, "bulkdata collection stopped", list(bulkdata.queue)
         
 
 @roast_bp.route("/", methods=["GET"])
