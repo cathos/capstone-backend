@@ -24,7 +24,7 @@ async def bulk_data_runner():
     '''
     async function to continuously get & cache roaster data
     '''
-    status_response = await roaster.get_status()
+    status_response = roaster.get_status()
     time.sleep(0.5)
     bulkdata.put(status_response)
     return bulkdata
