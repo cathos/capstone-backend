@@ -1,7 +1,9 @@
+import asyncio
 from datetime import datetime
 import json
 import os
 from pprint import pprint
+import time
 # from dotenv import load_dotenv
 import requests
 from flask import Blueprint, jsonify, abort, make_response, request
@@ -12,8 +14,28 @@ from app.client.usb_client import Roaster
 
 roast_bp = Blueprint("roast_bp", __name__, url_prefix="")
 roaster = Roaster()
-
+bulkdata = []
 roaster_dev = roaster.register_device()
+
+async def bulk_data_runner():
+    '''
+    async function to continuously get & cache roaster data
+    '''
+    time.sleep(0.5)
+    status_response = await roaster.get_status()
+    return status_response
+    
+async def bulk_data_collector():
+    '''
+    collector for bulk_data_runner
+    '''
+    if len(bulkdata) < 7200:
+        bulkdata.append(await bulk_data_runner())
+    else:
+        bulkdata.append(await bulk_data_runner())
+        bulkdata.pop(0)
+    return bulkdata
+
 
 @roast_bp.route("/", methods=["GET"])
 def index():
@@ -30,6 +52,7 @@ def initialize_usb_connection():
     roaster_dev = roaster.register_device()
     if roaster_dev is None:
         return make_response(jsonify("roaster not found"), 500)
+    bulk_data_collector()
     return make_response(jsonify("connection initialized"), 201)
 
 
@@ -66,6 +89,15 @@ def get_roaster_status():
     response_time_delta = datetime.now() - initial_time
     print('get roaster status response time', response_time_delta)
     return make_response(jsonify(status_response), 200)
+
+@roast_bp.route("/bulkdata", methods=["GET"])
+def get_bulk_roaster_data():
+    '''
+    send roast status requests over usb and return last x minutes of roast data
+    returns: bean temperatures, delta temp, roasting state, ...
+    todo: poll roaster continuously and cache data
+    '''
+    return make_response(jsonify(bulkdata), 200)
 
 @roast_bp.route("/change", methods=["POST"])
 def change_roaster_state():
