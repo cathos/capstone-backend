@@ -117,7 +117,7 @@ class Roaster:
 
     def get_status(self):
         loops = 0
-        while loops <= 3:
+        while loops <= 5:
             loops += 1
             self.send(AILLIO['commands']['status_1'])
             status_1 = self.receive(64)
@@ -129,8 +129,8 @@ class Roaster:
                     self.status = self.convert_data(received_data, 'status')
                     return self.status
             except KeyError: 
-                time.sleep(1)
-        return TimeoutError
+                time.sleep(0.5)
+        return "roaster usb response timed out"
 
     def send_command(self, command):
         try: 
