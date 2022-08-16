@@ -129,9 +129,9 @@ async def get_bulk_roaster_data():
     todo: poll roaster continuously and cache data
     '''
     if bulkdata_run:
-        return make_response(jsonify(list(bulkdata.queue)), 200)
+        return await make_response(jsonify(list(bulkdata.queue)), 200)
     else: 
-        return make_response(jsonify("Data Collection Not Running"), 400)
+        return await make_response(jsonify("Data Collection Not Running"), 400)
 
 @roast_bp.route("/change", methods=["POST"])
 async def change_roaster_state():
