@@ -101,7 +101,7 @@ def record_data(recording_state, bulkdata_run=False):
             return make_response(jsonify("Not Recording Roast Data"), 200)
         elif bulkdata_run == True:
             return make_response(jsonify("Recording Roast Data"), 200)
-    if recording_state == "start":
+    elif recording_state == "start":
         if bulkdata_run == False:
             bulkdata_run = True
             # background_tasks = set()
