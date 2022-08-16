@@ -1,12 +1,13 @@
 import os
 from quart import Quart
-from quart_cors import CORS
+from quart_cors import cors
 # from dotenv import load_dotenv
 
 # load_dotenv()
 
 def create_app(test_config=None):
     app = Quart(__name__, instance_relative_config=True)
+    app = cors(app, allow_origin="*")
     CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
     app.config.from_mapping(
