@@ -129,8 +129,7 @@ class Roaster:
                     self.status = self.convert_data(received_data, 'status')
                     return self.status
             except KeyError: 
-                time.sleep(0.25)
-                continue
+                time.sleep(1)
         return TimeoutError
 
     def send_command(self, command):
