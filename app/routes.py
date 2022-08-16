@@ -88,7 +88,7 @@ async def get_roaster_status():
     # headers_dict = dict(request.headers)
     # pprint(headers_dict)
     # initial_time = datetime.now()
-    status_response = await roaster.get_status()
+    status_response = roaster.get_status()
     # response_time_delta = datetime.now() - initial_time
     # print('get roaster status response time', response_time_delta)
     return await make_response(jsonify(status_response), 200)
@@ -151,19 +151,19 @@ async def change_roaster_state():
     # request_body = request.get_json()
     print(f"request_body {request_body}")
     if 'PRS' in request_body:
-        await roaster.send_command('prs_button')
-        status_response = await roaster.get_status()
+        roaster.send_command('prs_button')
+        status_response = roaster.get_status()
         return await make_response(jsonify(status_response['roaster_state']), 201)
     elif 'Heat+' in request_body:
-        status_response = await roaster.send_command('heater_increase')
+        status_response = roaster.send_command('heater_increase')
         return await make_response(jsonify(status_response['heater_level']), 201)
     elif 'Heat-' in request_body:
         status_response = roaster.send_command('heater_decrease')
         return await make_response(jsonify(status_response['heater_level']), 201)
     elif 'Fan+' in request_body:
-        status_response = await roaster.send_command('fan_increase')
+        status_response = roaster.send_command('fan_increase')
         return make_response(jsonify(status_response['fan_level']), 201)
     elif 'Fan-' in request_body:
-        status_response = await roaster.send_command('fan_decrease')
+        status_response = roaster.send_command('fan_decrease')
         return await make_response(jsonify(status_response['fan_level']), 201)
     return await make_response(jsonify("command_not_sent"), 400)
