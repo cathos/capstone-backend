@@ -8,7 +8,7 @@ from quart_cors import cors
 def create_app(test_config=None):
     app = Quart(__name__, instance_relative_config=True)
     app = cors(app, allow_origin="*")
-    CORS(app)
+    # CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
     app.config.from_mapping(
         SECRET_KEY='dev',
