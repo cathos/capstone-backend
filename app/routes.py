@@ -43,44 +43,44 @@ async def bulk_data_collector(bulkdata_run):
         
 
 @roast_bp.route("/", methods=["GET"])
-def index():
+async def index():
     '''
     Top-level information
     '''
-    return "Running Roaster Control Server version 0.01a"
+    return await "Running Roaster Control Server version 0.01a"
 
 @roast_bp.route("/init", methods=["POST"])
-def initialize_usb_connection():
+async def initialize_usb_connection():
     '''
     Negotiate and connect to roaster by usb. Attempt reconnection if necessary. 
     '''
-    roaster_dev = roaster.register_device()
+    roaster_dev = await roaster.register_device()
     if roaster_dev is None:
-        return make_response(jsonify("roaster not found"), 500)
-    return make_response(jsonify("connection initialized"), 201)
+        return await make_response(jsonify("roaster not found"), 500)
+    return await make_response(jsonify("connection initialized"), 201)
 
 @roast_bp.route("/release", methods=["POST"])
-def release_usb_connection():
+async def release_usb_connection():
     '''
     Release usb connection so that reconnection can occur. 
     '''
     try: 
-        response = roaster.unregister_device()
-        return make_response(jsonify(response), 201)
+        response = await roaster.unregister_device()
+        return await make_response(jsonify(response), 201)
     except: 
-        return make_response(jsonify("failed to release connection"), 500)
+        return await make_response(jsonify("failed to release connection"), 500)
 
 @roast_bp.route("/info", methods=["GET"])
-def get_roaster_info():
+async def get_roaster_info():
     '''
     send roast info requests over usb and return roaster info
     returns: roaster serial number, firmware version, ... 
     '''
-    info_response = roaster.get_info()
-    return make_response(jsonify(info_response), 200)
+    info_response = await roaster.get_info()
+    return await make_response(jsonify(info_response), 200)
 
 @roast_bp.route("/status", methods=["GET"])
-def get_roaster_status():
+async def get_roaster_status():
     '''
     send roast status requests over usb and return roaster status
     returns: bean temperatures, delta temp, roasting state, ...
@@ -88,23 +88,23 @@ def get_roaster_status():
     # headers_dict = dict(request.headers)
     # pprint(headers_dict)
     # initial_time = datetime.now()
-    status_response = roaster.get_status()
+    status_response = await roaster.get_status()
     # response_time_delta = datetime.now() - initial_time
     # print('get roaster status response time', response_time_delta)
-    return make_response(jsonify(status_response), 200)
+    return await make_response(jsonify(status_response), 200)
     
 
 @roast_bp.route("/record", methods=["POST"])
-def record_data(bulkdata_run = False):
+async def record_data(bulkdata_run = False):
     try: 
-        recording_state = request.get_json()["recording_state"]
+        recording_state = await request.get_json()["recording_state"]
     except: 
         recording_state = None
     if recording_state == None:
         if bulkdata_run == False:
-            return make_response(jsonify("Not Recording Roast Data"), 200)
+            return await make_response(jsonify("Not Recording Roast Data"), 200)
         elif bulkdata_run == True:
-            return make_response(jsonify("Recording Roast Data"), 200)
+            return await make_response(jsonify("Recording Roast Data"), 200)
     elif recording_state == "start":
         if bulkdata_run == False:
             bulkdata_run = True
@@ -113,28 +113,28 @@ def record_data(bulkdata_run = False):
             # background_tasks.add(task)
             # task.add_done_callback(background_tasks.discard)
             asyncio.run(bulk_data_collector(bulkdata_run))
-            return make_response(jsonify("Data Recording Started"), 201)
+            return await make_response(jsonify("Data Recording Started"), 201)
         else:
-            return make_response(jsonify("Data Recording Already Running"), 200)
+            return await make_response(jsonify("Data Recording Already Running"), 200)
     elif recording_state == "stop":
         bulkdata_run = False
-        return make_response(jsonify("Data Recording Stopped"), 201)
+        return await make_response(jsonify("Data Recording Stopped"), 201)
 
 
 @roast_bp.route("/bulkdata", methods=["GET"])
-def get_bulk_roaster_data():
+async def get_bulk_roaster_data():
     '''
     send roast status requests over usb and return last x minutes of roast data
     returns: bean temperatures, delta temp, roasting state, ...
     todo: poll roaster continuously and cache data
     '''
     if bulkdata_run:
-        return make_response(jsonify(list(bulkdata.queue)), 200)
+        return await make_response(jsonify(list(bulkdata.queue)), 200)
     else: 
-        return make_response(jsonify("Data Collection Not Running"), 400)
+        return await make_response(jsonify("Data Collection Not Running"), 400)
 
 @roast_bp.route("/change", methods=["POST"])
-def change_roaster_state():
+async def change_roaster_state():
     '''
     act on the following 'buttons':
     - PRS (change roaster modes - Preheat, (Charge), Roast, Cooling, Shutdown, Off)
@@ -147,23 +147,23 @@ def change_roaster_state():
     Maybe use try-except with the usb errors?
     '''
     # print(request.get_json(True))
-    request_body = request.get_json()['request']
+    request_body = await request.get_json()['request']
     # request_body = request.get_json()
     print(f"request_body {request_body}")
     if 'PRS' in request_body:
-        roaster.send_command('prs_button')
-        status_response = roaster.get_status()
-        return make_response(jsonify(status_response['roaster_state']), 201)
+        await roaster.send_command('prs_button')
+        status_response = await roaster.get_status()
+        return await make_response(jsonify(status_response['roaster_state']), 201)
     elif 'Heat+' in request_body:
-        status_response = roaster.send_command('heater_increase')
-        return make_response(jsonify(status_response['heater_level']), 201)
+        status_response = await roaster.send_command('heater_increase')
+        return await make_response(jsonify(status_response['heater_level']), 201)
     elif 'Heat-' in request_body:
         status_response = roaster.send_command('heater_decrease')
-        return make_response(jsonify(status_response['heater_level']), 201)
+        return await make_response(jsonify(status_response['heater_level']), 201)
     elif 'Fan+' in request_body:
-        status_response = roaster.send_command('fan_increase')
+        status_response = await roaster.send_command('fan_increase')
         return make_response(jsonify(status_response['fan_level']), 201)
     elif 'Fan-' in request_body:
-        status_response = roaster.send_command('fan_decrease')
-        return make_response(jsonify(status_response['fan_level']), 201)
-    return make_response(jsonify("command_not_sent"), 400)
+        status_response = await roaster.send_command('fan_decrease')
+        return await make_response(jsonify(status_response['fan_level']), 201)
+    return await make_response(jsonify("command_not_sent"), 400)
