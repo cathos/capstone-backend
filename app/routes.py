@@ -147,23 +147,24 @@ async def change_roaster_state():
     Maybe use try-except with the usb errors?
     '''
     # print(request.get_json(True))
-    request_body = request.get_json()['request']
+    request_body = await request.get_json()
+    result = request_body['request']
     # request_body = request.get_json()
-    print(f"request_body {request_body}")
-    if 'PRS' in request_body:
+    print(f"request body {result}")
+    if 'PRS' in result:
         roaster.send_command('prs_button')
         status_response = roaster.get_status()
         return await make_response(jsonify(status_response['roaster_state']), 201)
-    elif 'Heat+' in request_body:
+    elif 'Heat+' in result:
         status_response = roaster.send_command('heater_increase')
         return await make_response(jsonify(status_response['heater_level']), 201)
-    elif 'Heat-' in request_body:
+    elif 'Heat-' in result:
         status_response = roaster.send_command('heater_decrease')
         return await make_response(jsonify(status_response['heater_level']), 201)
-    elif 'Fan+' in request_body:
+    elif 'Fan+' in result:
         status_response = roaster.send_command('fan_increase')
         return make_response(jsonify(status_response['fan_level']), 201)
-    elif 'Fan-' in request_body:
+    elif 'Fan-' in result:
         status_response = roaster.send_command('fan_decrease')
         return await make_response(jsonify(status_response['fan_level']), 201)
     return await make_response(jsonify("command_not_sent"), 400)
