@@ -95,7 +95,7 @@ def get_roaster_status():
     
 
 @roast_bp.route("/record", methods=["POST"])
-def record_data():
+def record_data(bulkdata_run = False):
     try: 
         recording_state = request.get_json()["recording_state"]
     except: 
