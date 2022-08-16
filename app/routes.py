@@ -94,15 +94,28 @@ def get_roaster_status():
     return make_response(jsonify(status_response), 200)
     
 
-@roast_bp.route("/startbulkrecording", methods=["POST"])
-def start_bulk_recording():
-    bulkdata_run = True
-    # background_tasks = set()
-    # task = asyncio.create_task(bulk_data_collector())
-    # background_tasks.add(task)
-    # task.add_done_callback(background_tasks.discard)
-    asyncio.run(bulk_data_collector(bulkdata_run))
-    return make_response(jsonify("Bulk Data Recording Started"), 201)
+@roast_bp.route("/record/<recording_state>", methods=["GET", "POST"])
+def record_data(recording_state):
+    if recording_state == None:
+        if bulkdata_run == False:
+            return make_response(jsonify("Not Recording Roast Data"), 200)
+        elif bulkdata_run == True:
+            return make_response(jsonify("Recording Roast Data"), 200)
+    if recording_state == "start":
+        if bulkdata_run == False:
+            bulkdata_run = True
+            # background_tasks = set()
+            # task = asyncio.create_task(bulk_data_collector())
+            # background_tasks.add(task)
+            # task.add_done_callback(background_tasks.discard)
+            asyncio.run(bulk_data_collector(bulkdata_run))
+            return make_response(jsonify("Data Recording Started"), 201)
+        else:
+            return make_response(jsonify("Data Recording Already Running"), 200)
+    elif recording_state == "stop":
+        bulkdata_run = False
+        return make_response(jsonify("Data Recording Stopped"), 201)
+
 
 @roast_bp.route("/bulkdata", methods=["GET"])
 def get_bulk_roaster_data():
@@ -111,9 +124,10 @@ def get_bulk_roaster_data():
     returns: bean temperatures, delta temp, roasting state, ...
     todo: poll roaster continuously and cache data
     '''
-    print(f"bulkdata_run: {bulkdata_run}")
-    print(list(bulkdata.queue))   
-    return make_response(jsonify(list(bulkdata.queue)), 200)
+    if bulkdata_run:
+        return make_response(jsonify(list(bulkdata.queue)), 200)
+    else: 
+        return make_response(jsonify("Data Collection Not Running"), 400)
 
 @roast_bp.route("/change", methods=["POST"])
 def change_roaster_state():
