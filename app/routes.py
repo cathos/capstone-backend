@@ -94,8 +94,12 @@ def get_roaster_status():
     return make_response(jsonify(status_response), 200)
     
 
-@roast_bp.route("/record/<recording_state>", methods=["GET", "POST"])
-def record_data(recording_state, bulkdata_run=False):
+@roast_bp.route("/record", methods=["POST"])
+def record_data():
+    try: 
+        recording_state = request.get_json()["recording_state"]
+    except: 
+        recording_state = None
     if recording_state == None:
         if bulkdata_run == False:
             return make_response(jsonify("Not Recording Roast Data"), 200)
