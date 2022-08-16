@@ -2,6 +2,7 @@
 Coffee Roaster Control Server Backend (pairs with roast-server-fe)
 
 This project is designed as a full-stack webapp interface for a coffee roaster - initially supporting the Aillio Bullet R2.
+
 The [frontend](https://github.com/cathos/roast-server-fe/) uses:
   - React
   - SWR
