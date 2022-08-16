@@ -97,7 +97,8 @@ async def get_roaster_status():
 @roast_bp.route("/record", methods=["POST"])
 async def record_data(bulkdata_run = False):
     try: 
-        recording_state = await request.get_json()["recording_state"]
+        result = await request.get_json()
+        recording_state = result["recording_state"]
     except: 
         recording_state = None
     if recording_state == None:
