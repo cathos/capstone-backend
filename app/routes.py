@@ -47,7 +47,7 @@ async def index():
     '''
     Top-level information
     '''
-    return await "Running Roaster Control Server version 0.01a"
+    return "Running Roaster Control Server version 0.01a"
 
 @roast_bp.route("/init", methods=["POST"])
 async def initialize_usb_connection():
