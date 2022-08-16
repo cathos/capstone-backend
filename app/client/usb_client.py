@@ -3,6 +3,7 @@ from datetime import datetime
 from pprint import pprint
 import struct
 from struct import unpack
+import time
 from .roaster_const import AILLIO
 import usb.core
 import usb.util
@@ -108,22 +109,29 @@ class Roaster:
     def get_info(self):
         self.send(AILLIO['commands']['info_1'])
         info_1 = self.receive()
-        # add a wait here?
         self.send(AILLIO['commands']['info_2'])
         info_2 = self.receive(36)
-        recieved_data = info_1 + info_2
-        self.info = self.convert_data(recieved_data, 'info')
+        received_data = info_1 + info_2
+        self.info = self.convert_data(received_data, 'info')
         return self.info
 
     def get_status(self):
-        self.send(AILLIO['commands']['status_1'])
-        status_1 = self.receive(64)
-        # add a wait here?
-        self.send(AILLIO['commands']['status_2'])
-        status_2 = self.receive(64)
-        recieved_data = status_1 + status_2
-        self.status = self.convert_data(recieved_data, 'status')
-        return self.status
+        loops = 0
+        while loops <= 3:
+            loops += 1
+            self.send(AILLIO['commands']['status_1'])
+            status_1 = self.receive(64)
+            self.send(AILLIO['commands']['status_2'])
+            status_2 = self.receive(64)
+            received_data = status_1 + status_2
+            try: 
+                if received_data[29] in AILLIO['state']:
+                    self.status = self.convert_data(received_data, 'status')
+                    return self.status
+            except KeyError: 
+                time.sleep(0.25)
+                continue
+        return TimeoutError
 
     def send_command(self, command):
         try: 
