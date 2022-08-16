@@ -8,7 +8,7 @@ from queue import Queue
 import time
 # from dotenv import load_dotenv
 import requests
-from flask import Blueprint, jsonify, abort, make_response, request
+from quart import Blueprint, jsonify, abort, make_response, request
 # from app.client.roaster_const import AILLIO
 from app.client.usb_client import Roaster
 
