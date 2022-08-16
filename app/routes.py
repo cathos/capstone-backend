@@ -129,9 +129,9 @@ async def get_bulk_roaster_data():
     todo: poll roaster continuously and cache data
     '''
     if bulkdata_run:
-        return await make_response(jsonify(list(bulkdata.queue)), 200)
+        return make_response(jsonify(list(bulkdata.queue)), 200)
     else: 
-        return await make_response(jsonify("Data Collection Not Running"), 400)
+        return make_response(jsonify("Data Collection Not Running"), 400)
 
 @roast_bp.route("/change", methods=["POST"])
 async def change_roaster_state():
@@ -154,17 +154,17 @@ async def change_roaster_state():
     if 'PRS' in result:
         roaster.send_command('prs_button')
         status_response = roaster.get_status()
-        return await make_response(jsonify(status_response['roaster_state']), 201)
+        return make_response(jsonify(status_response['roaster_state']), 201)
     elif 'Heat+' in result:
         status_response = roaster.send_command('heater_increase')
-        return await make_response(jsonify(status_response['heater_level']), 201)
+        return make_response(jsonify(status_response['heater_level']), 201)
     elif 'Heat-' in result:
         status_response = roaster.send_command('heater_decrease')
-        return await make_response(jsonify(status_response['heater_level']), 201)
+        return make_response(jsonify(status_response['heater_level']), 201)
     elif 'Fan+' in result:
         status_response = roaster.send_command('fan_increase')
         return make_response(jsonify(status_response['fan_level']), 201)
     elif 'Fan-' in result:
         status_response = roaster.send_command('fan_decrease')
-        return await make_response(jsonify(status_response['fan_level']), 201)
-    return await make_response(jsonify("command_not_sent"), 400)
+        return make_response(jsonify(status_response['fan_level']), 201)
+    return make_response(jsonify("command_not_sent"), 400)
